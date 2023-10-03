@@ -57,7 +57,6 @@ loop:
 					log.Println(err)
 					continue
 				}
-				//fmt.Printf("%s\t", value)
 				sliseOfRealise[debtValue] = value
 
 			} else if columnIndex == 0 {
@@ -83,20 +82,37 @@ loop:
 
 	counteragent := cell.String()
 	date := cellDate.String()
-	fmt.Printf("Значение ячейки: %s\n", counteragent)
-	fmt.Printf("Значение ячейки: %s\n", date)
 
 	doc := document.New()
+	para2 := doc.AddParagraph()
+	para2.SetAlignment(wml.ST_JcCenter)
+	run2 := para2.AddRun()
+	run2.Properties().SetSize(11)
+	run2.Properties().SetFontFamily("Times New Roman")
+	run2.AddText("СОГЛАШЕНИЕ")
+	run2.AddBreak()
+	run2.AddText("О ЗАЧЕТЕ ВЗАИМНЫХ ТРЕБОВАНИЙ")
 	para := doc.AddParagraph()
-	para.AddRun().AddText(fmt.Sprintf("г. Екатеринбург                                                                                                                      \"%s\"", date))
+	run := para.AddRun()
+	run.Properties().SetFontFamily("Times New Roman")
+	run.Properties().SetSize(11)
+	run.AddText(fmt.Sprintf("г. Екатеринбург                                                                                                                      \"%s\"", "дата"))
+	run.AddBreak()
+	run.AddBreak()
+	run.AddBreak()
 	para.SetAlignment(wml.ST_JcRight)
 
 	// Добавляем основной текст в документ
-	mainText := `ЗАО «ЭнергоСтрой», в лице Генерального директора Бурнева Б.В., действующего на основании Устава, с одной стороны, и
-  ИП Мерц Олеся Анатольевна, действующая на основании свидетельства о государственной регистрации физического лица ОГРНИП № 317554300059968, с другой стороны,  подписали настоящее Соглашение о нижеследующем:`
 
 	para = doc.AddParagraph()
-	para.AddRun().AddText(mainText)
+	run = para.AddRun()
+	run.Properties().SetFontFamily("Times New Roman")
+	run.Properties().SetSize(11)
+	run.AddTab()
+	run.AddText("ЗАО «ЭнергоСтрой», в лице Генерального директора Бурнева Б.В., действующего на основании Устава, с одной стороны, и")
+	run.AddBreak()
+	run.AddTab()
+	run.AddText(counteragent + ", действующая на основании ____, с другой стороны,  подписали настоящее Соглашение о нижеследующем:")
 	i := 1
 	t, _ := time.Parse("01-02-06", date)
 	dateString := t.Format("02.01.2006")
@@ -110,7 +126,10 @@ loop:
 		rublesText, kopecksText := sumToText(ndsString)
 		moneyText, smallMoneyText := sumToText(money)
 		para = doc.AddParagraph()
-		para.AddRun().AddText(strconv.Itoa(i) + " " + counteragent + " по состоянию на " + dateString + "г. имеет задолженность перед ЗАО «ЭнергоСтрой» по " + value + ". в размере " + money + " руб" + ". (" + moneyText + " " + smallMoneyText + "), в т.ч. НДС " + ndsString + " руб. (" + rublesText + " " + kopecksText + " " + "). Срок исполнения обязательств наступил. Наличие указанной задолженности подтверждается Актом  сверки взаиморасчетов по состоянию на  " + dateString + "г.")
+		run := para.AddRun()
+		run.Properties().SetFontFamily("Times New Roman")
+		run.Properties().SetSize(11)
+		run.AddText(strconv.Itoa(i) + ". " + counteragent + " по состоянию на " + dateString + "г. имеет задолженность перед ЗАО «ЭнергоСтрой» по " + value + ". в размере " + money + " руб" + ". (" + moneyText + " " + smallMoneyText + "), в т.ч. НДС " + ndsString + " руб. (" + rublesText + " " + kopecksText + " " + "). Срок исполнения обязательств наступил. Наличие указанной задолженности подтверждается Актом  сверки взаиморасчетов по состоянию на  " + dateString + "г.")
 		i++
 	}
 	delete(sliseOfSub, "")
@@ -119,11 +138,14 @@ loop:
 		_, money, _ := niceType(key)
 		moneyText, smallMoneyText := sumToText(money)
 		para = doc.AddParagraph()
-		para.AddRun().AddText(strconv.Itoa(i) + " ЗАО «ЭнергоСтрой» по состоянию на " + dateString + "г. имеет задолженность перед " + counteragent + " " + value + "." + "в размере " + money + " руб. (" + moneyText + " " + smallMoneyText + "), без НДС. Срок исполнения обязательств наступил.Наличие указанной задолженности подтверждается Актом  сверки взаиморасчетов по состоянию на  " + dateString + "г.")
+		run := para.AddRun()
+		run.Properties().SetFontFamily("Times New Roman")
+		run.Properties().SetSize(11)
+		run.AddText(strconv.Itoa(i) + ". ЗАО «ЭнергоСтрой» по состоянию на " + dateString + "г. имеет задолженность перед " + counteragent + " " + value + "." + "в размере " + money + " руб. (" + moneyText + " " + smallMoneyText + "), без НДС. Срок исполнения обязательств наступил.Наличие указанной задолженности подтверждается Актом  сверки взаиморасчетов по состоянию на  " + dateString + "г.")
 		i++
 	}
 	para = doc.AddParagraph()
-	para.AddRun().AddText(strconv.Itoa(i) + "	Стороны пришли к соглашению о зачете взаимных  требований в соответствии со ст. 410 ГК РФ по обязательствам, указанным в п. 1 - 9 настоящего соглашения, в размере 5 132 208,76 руб. (Пять миллионов сто тридцать две тысячи двести восемь рублей 76 копеек), в т.ч. НДС 855 368,13 руб. (Восемьсот пятьдесят пять тысяч триста шестьдесят восемь рублей 13 копеек")
+	para.AddRun().AddText(strconv.Itoa(i) + ".	Стороны пришли к соглашению о зачете взаимных  требований в соответствии со ст. 410 ГК РФ по обязательствам, указанным в п. 1 - 9 настоящего соглашения, в размере 5 132 208,76 руб. (Пять миллионов сто тридцать две тысячи двести восемь рублей 76 копеек), в т.ч. НДС 855 368,13 руб. (Восемьсот пятьдесят пять тысяч триста шестьдесят восемь рублей 13 копеек")
 	b := 1
 	for key, value := range sliseOfRealise {
 		value = addY(value)
@@ -134,7 +156,10 @@ loop:
 		rublesText, kopecksText := sumToText(ndsString)
 		moneyText, smallMoneyText := sumToText(money)
 		para = doc.AddParagraph()
-		para.AddRun().AddText(strconv.Itoa(i) + "." + strconv.Itoa(b) + " Обязательства" + counteragent + " перед ЗАО «ЭнергоСтрой» по " + value + ". прекращаются в размере " + money + " руб" + ". (" + moneyText + " " + smallMoneyText + "), в т.ч. НДС " + ndsString + " руб. (" + rublesText + " " + kopecksText + " " + "). с " + dateString + "г.")
+		run := para.AddRun()
+		run.Properties().SetFontFamily("Times New Roman")
+		run.Properties().SetSize(11)
+		run.AddText(strconv.Itoa(i) + "." + strconv.Itoa(b) + ". Обязательства " + counteragent + " перед ЗАО «ЭнергоСтрой» по " + value + ". прекращаются в размере " + money + " руб" + ". (" + moneyText + " " + smallMoneyText + "), в т.ч. НДС " + ndsString + " руб. (" + rublesText + " " + kopecksText + "). с " + dateString + "г.")
 		b++
 	}
 	for key, value := range sliseOfSub {
@@ -142,11 +167,18 @@ loop:
 		_, money, _ := niceType(key)
 		moneyText, smallMoneyText := sumToText(money)
 		para = doc.AddParagraph()
-		para.AddRun().AddText(strconv.Itoa(i) + "." + strconv.Itoa(b) + " Обязательства ЗАО «ЭнергоСтрой» перед " + counteragent + " по " + value + ". прекращаются в размере " + money + " руб" + ". (" + moneyText + " " + smallMoneyText + "),без НДС с " + dateString + "г.")
+		run := para.AddRun()
+		run.Properties().SetFontFamily("Times New Roman")
+		run.Properties().SetSize(11)
+		run.AddText(strconv.Itoa(i) + "." + strconv.Itoa(b) + ". Обязательства ЗАО «ЭнергоСтрой» перед " + counteragent + " по " + value + ". прекращаются в размере " + money + " руб" + ". (" + moneyText + " " + smallMoneyText + "),без НДС с " + dateString + "г.")
 		b++
 	}
 	para = doc.AddParagraph()
-	para.AddRun().AddText(strconv.Itoa(i) + " С момента подписания настоящего Соглашения стороны считают  себя свободными от обязательств, в размере, прекращенном зачетом согласно п.10 настоящего соглашения. \nНастоящее Соглашение составлено в 2-х подлинных экземплярах,  по одному для каждой из сторон. \nНастоящее Соглашение вступает в силу с момента его   подписания сторонами.")
+	run = para.AddRun()
+	run.Properties().SetFontFamily("Times New Roman")
+	run.Properties().SetSize(11)
+	run.AddText(strconv.Itoa(i) + ". С момента подписания настоящего Соглашения стороны считают  себя свободными от обязательств, в размере, прекращенном зачетом согласно п.10 настоящего соглашения. \nНастоящее Соглашение составлено в 2-х подлинных экземплярах,  по одному для каждой из сторон. \nНастоящее Соглашение вступает в силу с момента его   подписания сторонами.")
+	para = doc.AddParagraph()
 	fileNameDate := time.Now().Format("02.01.2006")
 	err2 := doc.SaveToFile(fileNameDate + ".docx")
 	if err2 != nil {
@@ -275,3 +307,31 @@ func addY(text string) string {
 //
 //	return text
 //}
+//run.Properties().SetBold(true)
+//run.AddText(strconv.Itoa(i) + ". " + counteragent)
+//run.Properties().SetBold(false)
+//run.AddText(" по состоянию на ")
+//run.Properties().SetBold(true)
+//run.AddText(dateString)
+//run.Properties().SetBold(false)
+//run.AddText("г. имеет задолженность перед")
+//run.Properties().SetBold(true)
+//run.AddText("ЗАО «Энергострой»")
+//run.Properties().SetBold(false)
+//run.AddText("по")
+//run.Properties().SetBold(true)
+//run.AddText(value)
+//run.Properties().SetBold(false)
+//run.AddText("в размере")
+//run.Properties().SetBold(true)
+//run.AddText(money)
+//run.Properties().SetBold(false)
+//run.AddText("руб.")
+//run.AddText("(" + moneyText + " " + smallMoneyText + ")")
+//run.AddText(", в.т. НДС")
+//run.Properties().SetBold(true)
+//run.AddText(ndsString)
+//run.AddText("руб.(" + rublesText + " " + kopecksText + " " + "). Срок исполнения обязательств наступил.")
+//run.AddBreak()
+//run.AddTab()
+//run.AddText("Наличие указанной задолженности подтверждается Актом сверки взаиморасчетов по состоянию на " + dateString + "г.")
